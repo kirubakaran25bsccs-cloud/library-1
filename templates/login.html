@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block auth %}
+<div class="login-wrap">
+  <section class="login-side">
+    <h1>Every book, one desk.</h1>
+    <p>Track the catalogue, the members and every loan from a single place.</p>
+    <div class="spines" aria-hidden="true">
+      <i style="height:78%;background:#0E7C7B"></i><i style="height:92%;background:#E3B04B"></i>
+      <i style="height:64%;background:#B5382E"></i><i style="height:86%;background:#35506B"></i>
+      <i style="height:72%;background:#0E7C7B"></i><i style="height:95%;background:#8DA9C4"></i>
+      <i style="height:68%;background:#E3B04B"></i>
+    </div>
+  </section>
+  <section class="login-form">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}" role="status">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    <h2>Librarian sign in</h2>
+    <form method="post">
+      <label>Username
+        <input name="username" autocomplete="username" required autofocus>
+      </label>
+      <label>Password
+        <input name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <button class="btn primary" type="submit">Sign in</button>
+    </form>
+    <p class="hint">Demo login: admin / admin123</p>
+  </section>
+</div>
+{% endblock %}

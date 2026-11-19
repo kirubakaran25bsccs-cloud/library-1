@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Issue and return{% endblock %}
+{% block content %}
+<header class="page-head">
+  <h1>Issue and return</h1>
+  <a class="btn primary" href="{{ url_for('issue_new') }}">Issue a book</a>
+</header>
+
+<div class="tabs">
+  <a href="{{ url_for('issues', status='active') }}" class="{{ 'on' if status == 'active' }}">On loan</a>
+  <a href="{{ url_for('issues', status='overdue') }}" class="{{ 'on' if status == 'overdue' }}">Overdue</a>
+  <a href="{{ url_for('issues', status='returned') }}" class="{{ 'on' if status == 'returned' }}">Returned</a>
+  <a href="{{ url_for('issues', status='all') }}" class="{{ 'on' if status == 'all' }}">All</a>
+</div>
+
+<div class="panel flush">
+{% if issues %}
+<table>
+  <thead><tr><th>Book</th><th>Member</th><th>Issued</th><th>Due</th><th>Returned</th><th>Fine</th><th></th></tr></thead>
+  <tbody>
+  {% for i in issues %}
+    <tr class="{{ 'row-overdue' if i.overdue }}">
+      <td><strong>{{ i.title }}</strong></td>
+      <td>{{ i.name }}</td>
+      <td>{{ i.issued_on|pretty_date }}</td>
+      <td>{{ i.due_on|pretty_date }}{% if i.overdue %} <span class="tag bad">Overdue</span>{% endif %}</td>
+      <td>{{ i.returned_on|pretty_date }}</td>
+      <td>{% if i.current_fine %}<span class="bad">Rs. {{ i.current_fine }}</span>{% else %}-{% endif %}</td>
+      <td class="actions">
+        {% if not i.returned_on %}
+        <form method="post" action="{{ url_for('issue_return', issue_id=i.id) }}">
+          <button class="btn small" type="submit">Mark returned</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p class="empty">No loans in this list.</p>
+{% endif %}
+</div>
+{% endblock %}

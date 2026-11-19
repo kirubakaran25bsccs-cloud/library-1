@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<header class="page-head">
+  <h1>Dashboard</h1>
+  <a class="btn primary" href="{{ url_for('issue_new') }}">Issue a book</a>
+</header>
+
+<section class="stats">
+  <div class="stat"><b>{{ stats.titles }}</b><span>Titles ({{ stats.copies }} copies)</span></div>
+  <div class="stat"><b>{{ stats.members }}</b><span>Members</span></div>
+  <div class="stat"><b>{{ stats.on_loan }}</b><span>Books on loan</span></div>
+  <div class="stat {{ 'alert' if stats.overdue }}"><b>{{ stats.overdue }}</b><span>Overdue</span></div>
+  <div class="stat"><b>Rs. {{ stats.fines }}</b><span>Fines collected</span></div>
+</section>
+
+<section class="grid-2">
+  <div class="panel">
+    <h2>Copies by category</h2>
+    {% if chart_labels %}
+      <canvas id="catChart" height="220"></canvas>
+    {% else %}
+      <p class="empty">Add books to see the category chart.</p>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>Overdue loans</h2>
+    {% if overdue %}
+      <table>
+        <thead><tr><th>Book</th><th>Member</th><th>Due</th><th>Fine</th></tr></thead>
+        <tbody>
+        {% for o in overdue %}
+          <tr><td>{{ o.title }}</td><td>{{ o.name }}</td><td>{{ o.due_on|pretty_date }}</td><td class="bad">Rs. {{ o.fine }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="empty">Nothing is overdue.</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Recent activity</h2>
+  {% if recent %}
+  <table>
+    <thead><tr><th>Book</th><th>Member</th><th>Issued</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for r in recent %}
+      <tr>
+        <td>{{ r.title }}</td><td>{{ r.name }}</td><td>{{ r.issued_on|pretty_date }}</td>
+        <td>{% if r.returned_on %}<span class="tag ok">Returned</span>{% else %}<span class="tag">On loan</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="empty">No loans yet. Issue the first book to get started.</p>
+  {% endif %}
+</section>
+
+{% if chart_labels %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  new Chart(document.getElementById('catChart'), {
+    type: 'bar',
+    data: {
+      labels: {{ chart_labels|tojson }},
+      datasets: [{ data: {{ chart_values|tojson }}, backgroundColor: '#0E7C7B', borderRadius: 4 }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } }
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Add book' if mode == 'add' else 'Edit book' }}{% endblock %}
+{% block content %}
+<header class="page-head"><h1>{{ 'Add book' if mode == 'add' else 'Edit book' }}</h1></header>
+<form method="post" class="panel form">
+  <label>Title <input name="title" value="{{ book.title or '' }}" required></label>
+  <label>Author <input name="author" value="{{ book.author or '' }}" required></label>
+  <div class="row">
+    <label>ISBN <input name="isbn" value="{{ book.isbn or '' }}"></label>
+    <label>Category <input name="category" value="{{ book.category or '' }}" placeholder="Computer Science"></label>
+    <label>Total copies <input name="total_copies" type="number" min="1" value="{{ book.total_copies or 1 }}" required></label>
+  </div>
+  <div class="form-actions">
+    <button class="btn primary" type="submit">Save book</button>
+    <a class="btn" href="{{ url_for('books') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Members{% endblock %}
+{% block content %}
+<header class="page-head">
+  <h1>Members</h1>
+  <a class="btn primary" href="{{ url_for('member_add') }}">Add member</a>
+</header>
+
+<form class="filters" method="get">
+  <input name="q" value="{{ q }}" placeholder="Search by name, email or department">
+  <button class="btn" type="submit">Search</button>
+</form>
+
+<div class="panel flush">
+{% if members %}
+<table>
+  <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Department</th><th>Joined</th><th>On loan</th><th></th></tr></thead>
+  <tbody>
+  {% for m in members %}
+    <tr>
+      <td><strong>{{ m.name }}</strong></td>
+      <td>{{ m.email }}</td>
+      <td>{{ m.phone or '-' }}</td>
+      <td>{{ m.department or '-' }}</td>
+      <td class="muted">{{ m.joined_on|pretty_date }}</td>
+      <td>{{ m.on_loan }}</td>
+      <td class="actions">
+        <a href="{{ url_for('member_edit', member_id=m.id) }}">Edit</a>
+        <form method="post" action="{{ url_for('member_delete', member_id=m.id) }}"
+              onsubmit="return confirm('Delete this member and their loan history?');">
+          <button class="link danger" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p class="empty">No members found. Add a member to start issuing books.</p>
+{% endif %}
+</div>
+{% endblock %}

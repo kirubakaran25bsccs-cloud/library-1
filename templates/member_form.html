@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Add member' if mode == 'add' else 'Edit member' }}{% endblock %}
+{% block content %}
+<header class="page-head"><h1>{{ 'Add member' if mode == 'add' else 'Edit member' }}</h1></header>
+<form method="post" class="panel form">
+  <label>Full name <input name="name" value="{{ member.name or '' }}" required></label>
+  <label>Email <input name="email" type="email" value="{{ member.email or '' }}" required></label>
+  <div class="row">
+    <label>Phone <input name="phone" value="{{ member.phone or '' }}"></label>
+    <label>Department <input name="department" value="{{ member.department or '' }}" placeholder="CSE"></label>
+  </div>
+  <div class="form-actions">
+    <button class="btn primary" type="submit">Save member</button>
+    <a class="btn" href="{{ url_for('members') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

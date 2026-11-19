@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Issue a book{% endblock %}
+{% block content %}
+<header class="page-head"><h1>Issue a book</h1></header>
+<form method="post" class="panel form">
+  <label>Book
+    <select name="book_id" required>
+      <option value="">Choose a book</option>
+      {% for b in books %}
+        <option value="{{ b.id }}">{{ b.title }} - {{ b.author }} ({{ b.available_copies }} available)</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Member
+    <select name="member_id" required>
+      <option value="">Choose a member</option>
+      {% for m in members %}
+        <option value="{{ m.id }}">{{ m.name }}{% if m.department %} ({{ m.department }}){% endif %}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <p class="hint">Loan period is {{ LOAN_DAYS }} days. Late fine is Rs. {{ FINE_PER_DAY }} per day. A member can hold up to 3 books.</p>
+  <div class="form-actions">
+    <button class="btn primary" type="submit">Issue book</button>
+    <a class="btn" href="{{ url_for('issues') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

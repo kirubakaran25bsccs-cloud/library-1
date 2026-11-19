@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Books{% endblock %}
+{% block content %}
+<header class="page-head">
+  <h1>Books</h1>
+  <a class="btn primary" href="{{ url_for('book_add') }}">Add book</a>
+</header>
+
+<form class="filters" method="get">
+  <input name="q" value="{{ q }}" placeholder="Search by title, author or ISBN">
+  <select name="category">
+    <option value="">All categories</option>
+    {% for c in categories %}<option value="{{ c }}" {{ 'selected' if c == category }}>{{ c }}</option>{% endfor %}
+  </select>
+  <button class="btn" type="submit">Search</button>
+</form>
+
+<div class="panel flush">
+{% if books %}
+<table>
+  <thead><tr><th>Title</th><th>Author</th><th>Category</th><th>ISBN</th><th>Available</th><th></th></tr></thead>
+  <tbody>
+  {% for b in books %}
+    <tr>
+      <td><strong>{{ b.title }}</strong></td>
+      <td>{{ b.author }}</td>
+      <td>{{ b.category }}</td>
+      <td class="muted">{{ b.isbn or '-' }}</td>
+      <td>
+        {% if b.available_copies == 0 %}<span class="tag bad">All out</span>
+        {% else %}{{ b.available_copies }} of {{ b.total_copies }}{% endif %}
+      </td>
+      <td class="actions">
+        <a href="{{ url_for('book_edit', book_id=b.id) }}">Edit</a>
+        <form method="post" action="{{ url_for('book_delete', book_id=b.id) }}"
+              onsubmit="return confirm('Delete {{ b.title|replace("'", "") }}? Its loan history will be removed too.');">
+          <button class="link danger" type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p class="empty">No books match. Clear the search or add a new book.</p>
+{% endif %}
+</div>
+{% endblock %}
